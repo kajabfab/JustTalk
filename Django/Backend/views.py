@@ -36,7 +36,6 @@ def signin(request):
 def signout(request):
     if request.method == 'POST':
         # print json.loads(request.body)
-        user = json.loads(request.body)
         status = services.signout(request)
         if status == 1:
             return HttpResponse("Signout OK")
@@ -45,6 +44,15 @@ def signout(request):
 
 
 def forum(request):
-    if request.method == 'GET':
-        # chat_request =
-        pass
+    if request.method == 'POST':
+        chat_request = json.loads(request.body)
+        if chat_request['command'] == 'find':
+            chat_room_obj = services.getforum(chat_request['location'])
+            return JsonResponse(chat_room_obj.chat_tree, safe=False)
+
+        elif chat_request['command'] == 'update':
+            status = services.postforum(chat_request)
+            if status == 1:
+                return HttpResponse("Forum saved")
+            else:
+                return HttpResponseBadRequest("Not good")
