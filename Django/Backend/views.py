@@ -48,7 +48,10 @@ def forum(request):
         chat_request = json.loads(request.body)
         if chat_request['command'] == 'find':
             chat_room_obj = services.getforum(chat_request['location'])
-            return JsonResponse(chat_room_obj.chat_tree, safe=False)
+            if chat_room_obj:
+                return JsonResponse(chat_room_obj.chat_tree, safe=False)
+            else:
+                return HttpResponseBadRequest("Not good")
 
         elif chat_request['command'] == 'update':
             status = services.postforum(chat_request)
